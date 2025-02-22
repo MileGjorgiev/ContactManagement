@@ -21,8 +21,7 @@ namespace ContactManagement.DAL.Concrete
 
         public async Task<Country> GetAsync(int countryId)
         {
-            var country = await _context.Countries.FindAsync(countryId)
-                  ?? throw new KeyNotFoundException($"Country with ID {countryId} not found.");
+            var country = await _context.Countries.FindAsync(countryId);
 
             return country;
         }

@@ -6,6 +6,7 @@ using ContactManagement.API.Controllers.V1;
 using ContactManagement.BLL.Abstract;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.Logging;
 
 namespace ContactManagment.Tests.ControllerTests
 {
@@ -13,13 +14,15 @@ namespace ContactManagment.Tests.ControllerTests
     {
         private readonly Mock<ICompanyService> _companyServiceMock;
         private readonly Mock<IValidator<Company>> _companyValidatorMock;
+        private readonly Mock<ILogger<CompanyController>> _companyLoggerMock;
         private readonly CompanyController _companyController;
 
         public CompanyControllerTests()
         {
             _companyServiceMock = new Mock<ICompanyService>();
             _companyValidatorMock = new Mock<IValidator<Company>>();
-            _companyController = new CompanyController(_companyServiceMock.Object, _companyValidatorMock.Object);
+            _companyLoggerMock = new Mock<ILogger<CompanyController>>();
+            _companyController = new CompanyController(_companyServiceMock.Object, _companyValidatorMock.Object, _companyLoggerMock.Object);
         }
 
         // Existing Tests

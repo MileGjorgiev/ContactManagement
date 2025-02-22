@@ -35,8 +35,7 @@ namespace ContactManagement.DAL.Concrete
         {
             using (var context = CreateDbContext())
             {
-                var company = await context.Companies.FindAsync(companyId)
-                      ?? throw new KeyNotFoundException($"Company with ID {companyId} not found.");
+                var company = await context.Companies.FindAsync(companyId);
 
                 LoggerSingleton.Instance.Log("User fetched successfully.");
 

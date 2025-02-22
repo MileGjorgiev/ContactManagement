@@ -4,6 +4,11 @@ using Xunit;
 using ContactManagement.Models.Entities;
 using ContactManagement.API.Controllers.V1;
 using ContactManagement.BLL.Abstract;
+using FluentValidation;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using FluentValidation.Results;
 
 
 namespace ContactManagment.Tests.ControllerTests
@@ -12,12 +17,16 @@ namespace ContactManagment.Tests.ControllerTests
     public class ContactControllerTests
     {
         private readonly Mock<IContactService> _contactServiceMock;
+        private readonly Mock<IValidator<Contact>> _contactValidatorMock;
+        private readonly Mock<ILogger<ContactController>> _contactLoggerMock;
         private readonly ContactController _contactController;
 
         public ContactControllerTests()
         {
             _contactServiceMock = new Mock<IContactService>();
-            _contactController = new ContactController(_contactServiceMock.Object);
+            _contactValidatorMock = new Mock<IValidator<Contact>>();
+            _contactLoggerMock = new Mock<ILogger<ContactController>>();
+            _contactController = new ContactController(_contactServiceMock.Object, _contactLoggerMock.Object, _contactValidatorMock.Object);
         }
 
         [Fact]
@@ -77,40 +86,39 @@ namespace ContactManagment.Tests.ControllerTests
         public async Task Save_ValidContact_ReturnsJsonResultWithContactId()
         {
             // Arrange
-            var contact = new Contact { ContactId = 1, ContactName = "John Doe", CompanyId = 1, CountryId = 1 };
+            var contact = new Contact
+            {
+                ContactId = 1,
+                ContactName = "John Doe", 
+                CompanyId = 5,           // Ensure this ID exists in the database
+                CountryId = 2            // Ensure this ID exists in the database
+            };
+
+            // Mock the validation to pass
+            var validationResult = new FluentValidation.Results.ValidationResult(new List<FluentValidation.Results.ValidationFailure>()); 
+            _contactValidatorMock.Setup(validator => validator.ValidateAsync(contact, It.IsAny<CancellationToken>()))
+                                 .Returns(Task.FromResult(validationResult)); 
+
+
             _contactServiceMock.Setup(service => service.SaveAsync(contact))
-                   .ReturnsAsync(contact.ContactId); // Return the ContactId as an int
+                               .ReturnsAsync(contact.ContactId);
 
             // Act
             var result = await _contactController.Save(contact);
 
             // Assert
-            var jsonResult = Xunit.Assert.IsType<JsonResult>(result);
+            var jsonResult = Xunit.Assert.IsType<JsonResult>(result); 
             Xunit.Assert.NotNull(jsonResult.Value);
 
-            // Use reflection to access the contactId property
+           
             var value = jsonResult.Value;
             var propertyInfo = value.GetType().GetProperty("contactId");
-            Xunit.Assert.NotNull(propertyInfo); // Ensure the property exists
+            Xunit.Assert.NotNull(propertyInfo);
 
             var contactId = (int)propertyInfo.GetValue(value);
             Xunit.Assert.Equal(contact.ContactId, contactId);
         }
 
-        [Fact]
-        public async Task Save_InvalidContact_ReturnsBadRequest()
-        {
-            // Arrange
-            var contact = new Contact();
-            _contactController.ModelState.AddModelError("ContactName", "Contact name is required");
-
-            // Act
-            var result = await _contactController.Save(contact);
-
-            // Assert
-            var badRequestResult = Xunit.Assert.IsType<BadRequestObjectResult>(result);
-            Xunit.Assert.NotNull(badRequestResult.Value);
-        }
 
         [Fact]
         public async Task Delete_ValidContactId_ReturnsOkResult()

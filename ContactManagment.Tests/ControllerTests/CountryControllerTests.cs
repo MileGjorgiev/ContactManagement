@@ -4,12 +4,11 @@ using Xunit;
 using ContactManagement.Models.Entities;
 using ContactManagement.API.Controllers.V1;
 using ContactManagement.BLL.Abstract;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using ContactManagement.BLL.Requests;
+using Microsoft.Extensions.Logging;
 
 namespace ContactManagment.Tests.ControllerTests
 {
@@ -19,6 +18,7 @@ namespace ContactManagment.Tests.ControllerTests
         private readonly Mock<ICountryService> _countryServiceMock;
         private readonly Mock<IValidator<Country>> _countryValidatorMock;
         private readonly Mock<IMediator> _mediatorMock;
+        private readonly Mock<ILogger<CountryController>> _countryLoggerMock;
         private readonly CountryController _countryController;
 
         public CountryControllerTests()
@@ -26,7 +26,8 @@ namespace ContactManagment.Tests.ControllerTests
             _countryServiceMock = new Mock<ICountryService>();
             _countryValidatorMock = new Mock<IValidator<Country>>();
             _mediatorMock = new Mock<IMediator>();
-            _countryController = new CountryController(_countryServiceMock.Object, _countryValidatorMock.Object, _mediatorMock.Object);
+            _countryLoggerMock = new Mock<ILogger<CountryController>>();
+            _countryController = new CountryController(_countryServiceMock.Object, _countryValidatorMock.Object, _mediatorMock.Object, _countryLoggerMock.Object);
         }
 
         [Fact]
