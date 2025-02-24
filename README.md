@@ -23,3 +23,22 @@ Advanced Features:
   - MediatR: Implementation of the Mediator pattern for handling requests.
 
   - Minimal API: Support for minimal API endpoints.
+
+  - Pipeline behavior
+
+## Technologies Used
+- Backend: .NET 8, C#
+
+- Database: SQL Server (Code-First with Entity Framework Core)
+
+- Authentication: JWT (JSON Web Tokens)
+
+- Validation: FluentValidation
+
+- Mediator Pattern: MediatR
+
+- Logging: Microsoft.Extensions.Logging
+
+- Testing: xUnit, Moq
+
+- API Documentation: Swagger
