@@ -18,8 +18,8 @@ Swagger UI: Interactive API documentation using Swagger.
 
 Advanced Features:
 
-FluentValidation: Input validation for all entities.
+  FluentValidation: Input validation for all entities.
 
-MediatR: Implementation of the Mediator pattern for handling requests.
+  MediatR: Implementation of the Mediator pattern for handling requests.
 
-Minimal API: Support for minimal API endpoints.
+  Minimal API: Support for minimal API endpoints.
