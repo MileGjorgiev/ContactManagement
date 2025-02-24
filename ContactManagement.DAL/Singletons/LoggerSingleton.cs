@@ -14,7 +14,7 @@ namespace ContactManagement.DAL.Singletons
 
         private LoggerSingleton()
         {
-            // Create a ServiceCollection to get an ILogger instance
+           
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder.AddConsole())
                 .BuildServiceProvider();

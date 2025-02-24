@@ -1,7 +1,10 @@
-﻿namespace ContactManagement.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ContactManagement.Models.Entities
 {
     public class Contact
     {
+        [Key]
         public int ContactId { get; set; }
         public string ContactName { get; set; }
 

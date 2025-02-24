@@ -16,9 +16,11 @@ using ContactManagement.BLL.PipelineBehaviors;
 using Microsoft.OpenApi.Models;
 using ContactManagement.Models.Entities;
 using ContactManagement.DAL.Configuration;
+using FluentValidation;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Connection string for the database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -26,12 +28,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//Fluent Validators
-builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CountryValidator>());
-builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CompanyValidator>());
+// Fluent Validators
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CountryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CompanyValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ContactValidator>();
 
 //MediaTR
-builder.Services.AddMediatR(typeof(GetAllCountriesHandler).Assembly); // Registers handlers from a specific assembly
+builder.Services.AddMediatR(typeof(GetAllCountriesHandler).Assembly);
 
 //Pipeline Behavior
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
@@ -76,9 +82,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "YourIssuer",  
-            ValidAudience = "YourAudience",  
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("my32byteverysecretkey12345678901"))  
+            ValidIssuer = "ContactManagement",  
+            ValidAudience = "ContactManagement",  
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("eZkz8l3XYuV8Zt9tRpw89nA9DbYy5PZ5TrJ1mTgK1yU="))  
         };
     });
 
@@ -141,7 +147,7 @@ app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "ContactManagement API v1");
-    options.RoutePrefix = string.Empty; // Makes Swagger UI available at the root ("/")
+    options.RoutePrefix = "swagger";
 });
 
 app.UseHttpsRedirection();
@@ -173,7 +179,12 @@ using (var scope = app.Services.CreateScope())
 
 LoggerSingleton.Instance.Log("Application is starting...!");
 
-//MinimalAPI
+/// <summary>
+/// Retrieves all countries using Minimal API.
+/// </summary>
+/// <returns>
+/// A 200 OK response containing the list of all countries retrieved from the service.
+/// </returns>
 app.MapGet("api/v1/countries/minimalAPI", async (ICountryService countryService) =>
 {
     var countries = await countryService.GetAllAsync();

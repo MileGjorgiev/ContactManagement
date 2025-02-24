@@ -25,7 +25,13 @@ namespace ContactManagement.API.Controllers.V1
             _logger = logger;
         }
 
-
+        /// <summary>
+        /// Retrieves a list of all countries.
+        /// </summary>
+        /// <returns>
+        /// Returns a list of all countries in the system. 
+        /// If an error occurs, returns a 500 Internal Server Error response.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -41,12 +47,21 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Retrieves a country by its ID.
+        /// </summary>
+        /// <param name="countryId">The ID of the country to retrieve.</param>
+        /// <returns>
+        /// Returns the country with the given ID. 
+        /// If the country is not found, a 404 Not Found response is returned. 
+        /// If an error occurs, a 500 Internal Server Error response is returned.
+        /// </returns>
         [HttpGet("{countryId}")]
         public async Task<IActionResult> Get(int countryId)
         {
             try
             {
-                Country country = await _countryService.GetAsync(countryId: countryId);
+                Country country = await _countryService.GetAsync(countryId);
 
                 if (country == null)
                 {
@@ -63,6 +78,16 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Saves a new country or updates an existing one.
+        /// </summary>
+        /// <param name="country">The country object to be saved.</param>
+        /// <returns>
+        /// Returns a JSON object containing the saved country ID. 
+        /// If validation fails, a 400 Bad Request response is returned. 
+        /// If a database error occurs, a 500 Internal Server Error response is returned. 
+        /// If the country is not found during the operation, a 404 Not Found response is returned.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] Country country)
         {
@@ -98,6 +123,15 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Deletes a country by its ID.
+        /// </summary>
+        /// <param name="countryId">The ID of the country to be deleted.</param>
+        /// <returns>
+        /// Returns an HTTP 200 OK response if the country is successfully deleted.
+        /// If the country is not found, returns a 404 Not Found response with an error message.
+        /// In case of an unexpected error, returns a 500 Internal Server Error with an error message.
+        /// </returns>
         [HttpDelete("{countryId}")]
         public async Task<IActionResult> Delete(int countryId)
         {
@@ -118,15 +152,38 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Retrieves company statistics for a given country based on the country ID.
+        /// </summary>
+        /// <param name="countryId">The ID of the country for which company statistics are to be fetched.</param>
+        /// <returns>
+        /// Returns a JSON object containing a dictionary of company names and their corresponding contact counts. 
+        /// In case of an error, a 500 Internal Server Error response is returned.
+        /// </returns>
         [HttpGet("/getCompanyStatisticsByCountryId")]
         public async Task<IActionResult> getCompanyStatisticsByCountryId([FromQuery] int countryId)
         {
-            Dictionary<string, int> companies = await _countryService.GetContactsWithCompanyAndCountry(countryId);
-            return new JsonResult(companies);
+            try
+            {
+                Dictionary<string, int> companies = await _countryService.GetCompanyStatisticsByCountryId(countryId);
+                return new JsonResult(companies);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred while fetching countries.");
+            }
         }
 
+        /// <summary>
+        /// Retrieves all countries using MediatR.
+        /// </summary>
+        /// <returns>
+        /// Returns a JSON object containing the list of all countries retrieved via a MediatR query.
+        /// In case of an error, a 500 Internal Server Error response is returned.
+        /// </returns>
         [HttpGet("/mediatR")]
-        public async Task<IActionResult> GetAllMediaTR()
+        public async Task<IActionResult> GetAllMediatR()
         {
             try
             {

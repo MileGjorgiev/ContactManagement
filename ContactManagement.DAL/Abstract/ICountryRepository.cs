@@ -4,6 +4,6 @@ namespace ContactManagement.DAL.Abstract
 {
     public interface ICountryRepository : IRepository<Country>
     {
-        Task<Dictionary<string, int>> GetContactsWithCompanyAndCountry(int countryId);
+        Task<Dictionary<string, int>> GetCompanyStatisticsByCountryId(int countryId);
     }
 }

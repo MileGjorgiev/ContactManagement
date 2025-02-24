@@ -1,6 +1,9 @@
 ﻿using ContactManagement.DAL.Abstract;
+using ContactManagement.DAL.Singletons;
 using ContactManagement.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace ContactManagement.DAL.Concrete
 {
@@ -13,11 +16,20 @@ namespace ContactManagement.DAL.Concrete
             _context = context;
         }
 
+        /// <summary>
+        /// Asynchronously retrieves all contacts from the database.
+        /// </summary>
+        /// <returns>A list of all contacts.</returns>
         public async Task<List<Contact>> GetAllAsync()
         {
             return await _context.Contacts.ToListAsync();
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a contact by its ID from the database.
+        /// </summary>
+        /// <param name="contactId">The ID of the contact to retrieve.</param>
+        /// <returns>The contact with the specified ID, or null if not found.</returns>
         public async Task<Contact> GetAsync(int contactId)
         {
             var contact = await _context.Contacts.FindAsync(contactId);
@@ -25,6 +37,13 @@ namespace ContactManagement.DAL.Concrete
             return contact;
         }
 
+        /// <summary>
+        /// Asynchronously saves a contact to the database. If the contact already exists, it updates it. Otherwise, it adds a new contact.
+        /// </summary>
+        /// <param name="contact">The contact to be saved or updated.</param>
+        /// <returns>The ID of the saved or updated contact.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the company or country associated with the contact does not exist,
+        /// or the contact to update is not found.</exception>
         public async Task<int> SaveAsync(Contact contact)
         {
             
@@ -51,13 +70,17 @@ namespace ContactManagement.DAL.Concrete
                 }
             }
 
-           
             _context.Entry(contact).State = contact.ContactId > 0 ? EntityState.Modified : EntityState.Added;
             await _context.SaveChangesAsync();
 
             return contact.ContactId;
         }
 
+        /// <summary>
+        /// Asynchronously deletes a contact from the database by its ID.
+        /// </summary>
+        /// <param name="contactId">The ID of the contact to be deleted.</param>
+        /// <exception cref="KeyNotFoundException">Thrown when the contact with the specified ID is not found in the database.</exception>
         public async Task DeleteAsync(int contactId)
         {
             var contact = await _context.Contacts.FindAsync(contactId)
@@ -68,6 +91,10 @@ namespace ContactManagement.DAL.Concrete
 
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a list of contacts along with their associated company and country information.
+        /// </summary>
+        /// <returns>A list of contacts with their corresponding company and country details.</returns>
         public async Task<List<Contact>> GetContactsWithCompanyAndCountry()
         {
             return await _context.Contacts
@@ -76,7 +103,13 @@ namespace ContactManagement.DAL.Concrete
                 .ToListAsync();
         }
 
-
+        /// <summary>
+        /// Asynchronously filters contacts based on the specified country ID and company ID.
+        /// </summary>
+        /// <param name="countryId">The ID of the country to filter contacts by (optional).</param>
+        /// <param name="companyId">The ID of the company to filter contacts by (optional).</param>
+        /// <returns>A list of contacts that match the given country and company criteria.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the provided country ID or company ID does not exist in the database.</exception>
         public async Task<List<Contact>> FilterContacts(int? countryId, int? companyId)
         {
             if (countryId.HasValue && countryId > 0)

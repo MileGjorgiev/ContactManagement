@@ -2,11 +2,7 @@
 using ContactManagement.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.ComponentModel.Design;
 using FluentValidation;
-using ContactManagement.BLL.Concrete;
-using ContactManagement.BLL.Validators;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagement.API.Controllers.V1
@@ -26,6 +22,13 @@ namespace ContactManagement.API.Controllers.V1
             _contactValidator = contactValidator;
         }
 
+        /// <summary>
+        /// Retrieves a list of all contacts, accessible only to authorized users.
+        /// </summary>
+        /// <returns>
+        /// Returns a list of all contacts. 
+        /// If an error occurs, returns a 500 Internal Server Error with an appropriate error message.
+        /// </returns>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAll()
@@ -42,12 +45,21 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Retrieves a contact by its ID.
+        /// </summary>
+        /// <param name="contactId">The ID of the contact to retrieve.</param>
+        /// <returns>
+        /// Returns the contact with the specified ID.
+        /// If the contact is not found, returns a 404 Not Found response with an error message.
+        /// In case of an unexpected error, returns a 500 Internal Server Error with an error message.
+        /// </returns>
         [HttpGet("{contactId}")]
         public async Task<IActionResult> Get(int contactId)
         {
             try
             {
-                Contact contact = await _contactService.GetAsync(contactId: contactId);
+                Contact contact = await _contactService.GetAsync(contactId);
 
                 if (contact == null)
                 {
@@ -64,6 +76,17 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Saves a new contact or updates an existing one.
+        /// </summary>
+        /// <param name="contact">The contact object to save or update.</param>
+        /// <returns>
+        /// Returns the ID of the saved contact.
+        /// If validation fails, returns a 400 Bad Request with validation errors.
+        /// If the country is not found during the operation, a 404 Not Found response is returned.
+        /// In case of a database error, returns a 500 Internal Server Error with a database error message.
+        /// For any other unexpected error, returns a 500 Internal Server Error with a generic error message.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] Contact contact)
         {
@@ -96,6 +119,15 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Deletes a contact by its ID.
+        /// </summary>
+        /// <param name="contactId">The ID of the contact to delete.</param>
+        /// <returns>
+        /// Returns a 200 OK if the contact was successfully deleted.
+        /// If the contact is not found, returns a 404 Not Found with the error message.
+        /// In case of an unexpected error, returns a 500 Internal Server Error with a generic error message.
+        /// </returns>
         [HttpDelete("{contactId}")]
         public async Task<IActionResult> Delete(int contactId)
         {
@@ -117,6 +149,13 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of contacts, including their associated company and country information.
+        /// </summary>
+        /// <returns>
+        /// Returns a list of contacts with their related company and country details.
+        /// In case of an unexpected error, returns a 500 Internal Server Error with a generic error message.
+        /// </returns>
         [HttpGet("/getContactsWithCompanyAndCountry")]
         public async Task<IActionResult> GetContactsWithCompanyAndCountry()
         {
@@ -133,6 +172,21 @@ namespace ContactManagement.API.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Filters the contacts based on optional company and/or country ID parameters.
+        /// </summary>
+        /// <param name="companyId">
+        /// An optional parameter for filtering contacts by company ID.
+        /// </param>
+        /// <param name="countryId">
+        /// An optional parameter for filtering contacts by country ID.
+        /// </param>
+        /// <returns>
+        /// Returns a list of filtered contacts based on the provided company and/or country ID.
+        /// In case of an error, returns an appropriate error message:
+        /// 404 Not Found if no matching country or company are found.
+        /// 500 Internal Server Error for any unexpected issues.
+        /// </returns>
         [HttpGet("/filterContacts")]
         public async Task<IActionResult> FilterContacts([FromQuery] int? companyId, [FromQuery] int? countryId)
         {

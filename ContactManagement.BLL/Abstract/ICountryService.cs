@@ -8,6 +8,6 @@ namespace ContactManagement.BLL.Abstract
         Task<Country> GetAsync(int countryId);
         Task<int> SaveAsync(Country country);
         Task DeleteAsync(int countryId);
-        Task<Dictionary<string, int>> GetContactsWithCompanyAndCountry(int countryId);
+        Task<Dictionary<string, int>> GetCompanyStatisticsByCountryId(int countryId);
     }
 }

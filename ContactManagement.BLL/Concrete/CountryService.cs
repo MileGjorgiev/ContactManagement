@@ -37,10 +37,10 @@ namespace ContactManagement.BLL.Concrete
             await countryRepository.DeleteAsync(countryId);
         }
 
-        public async Task<Dictionary<string, int>> GetContactsWithCompanyAndCountry(int countryId)
+        public async Task<Dictionary<string, int>> GetCompanyStatisticsByCountryId(int countryId)
         {
             var countryRepository = _repositoryFactory.CreateCountryRepository();
-            return await countryRepository.GetContactsWithCompanyAndCountry(countryId);
+            return await countryRepository.GetCompanyStatisticsByCountryId(countryId);
         }
     }
 }
