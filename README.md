@@ -1,2 +1,2 @@
-Contact Management API
+# Contact Management API
 The Contact Management API is a web application built using .NET 8 and C#. It provides CRUD operations for managing contacts, companies, and countries. The API supports advanced features like filtering, pagination, authentication, and more. It follows clean architecture principles and uses technologies like Entity Framework Core, FluentValidation, MediatR, and Swagger for API documentation.
