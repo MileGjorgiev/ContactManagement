@@ -44,7 +44,7 @@ Advanced Features:
 - API Documentation: Swagger
 
 ## API Documentation
-Authentication
+###Authentication
 - Login:
 
   - Endpoint: POST /api/v1/auth/login
@@ -60,6 +60,6 @@ Authentication
   - Response:
 ```json
     {
-  "token": "your-jwt-token"
-}
+      "token": "your-jwt-token"
+    }
 ```
