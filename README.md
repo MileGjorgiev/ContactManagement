@@ -43,6 +43,26 @@ Advanced Features:
 
 - API Documentation: Swagger
 
+## Design Patterns
+The project leverages several design patterns to ensure clean, maintainable, and scalable code:
+- Factory Pattern:
+
+  - Used in the RepositoryFactory class to create instances of repositories dynamically.
+
+  - This pattern decouples the creation of repository objects from the service layer, making the code more flexible and easier to test.
+
+- Singleton Pattern:
+
+  - Implemented in the LoggerSingleton class to ensure a single instance of the logger is used throughout the application.
+
+  - This pattern is useful for managing shared resources like logging, configuration, or database connections.
+
+- Options Pattern:
+
+  - Used for managing configuration settings (e.g., database connection strings) in a strongly-typed way.
+
+  - The DatabaseSettings class is configured in appsettings.json and injected into services using the IOptions<T> interface.
+
 ## API Documentation
 Authentication
 - Login:
