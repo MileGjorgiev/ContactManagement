@@ -56,3 +56,10 @@ Authentication
   "username": "login",
   "password": "login"
 }
+  ```
+  - Response:
+```json
+    {
+  "token": "your-jwt-token"
+}
+```
