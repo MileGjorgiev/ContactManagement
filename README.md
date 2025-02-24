@@ -44,7 +44,7 @@ Advanced Features:
 - API Documentation: Swagger
 
 ## API Documentation
-###Authentication
+Authentication
 - Login:
 
   - Endpoint: POST /api/v1/auth/login
@@ -59,7 +59,110 @@ Advanced Features:
   ```
   - Response:
 ```json
-    {
-      "token": "your-jwt-token"
-    }
+{
+  "token": "your-jwt-token"
+}
 ```
+
+Contacts
+- Get All Contacts:
+
+  - Endpoint: GET /api/v1/contact
+
+  - Requires Authentication: Yes
+
+  - Response:
+```json
+[
+  {
+    "contactId": 1,
+    "contactName": "John Doe",
+    "companyId": 1,
+    "countryId": 1
+  }
+]
+```
+- Filter Contacts:
+
+  - Endpoint: GET /api/v1/contact/filterContacts?countryId=1&companyId=1
+
+  - Response:
+    
+```json
+[
+  {
+    "contactId": 1,
+    "contactName": "John Doe",
+    "companyId": 1,
+    "countryId": 1
+  }
+]
+```
+Companies
+- Get All Companies:
+
+  - Endpoint: GET /api/v1/company
+
+  - Response:
+```json
+[
+  {
+    "companyId": 1,
+    "companyName": "Google"
+  }
+]
+```
+- Get Paginated Companies:
+
+  - Endpoint: GET /api/v1/company/companyPagionation?pageNumber=1&pageSize=2
+
+  - Response:
+```json
+{
+  "pageNumber": 1,
+  "pageSize": 2,
+  "totalPages": 5,
+  "totalRecords": 10,
+  "data": [
+    {
+      "companyId": 1,
+      "companyName": "Google"
+    }
+  ]
+}
+```
+Countries
+- Get All Countries:
+
+  - Endpoint: GET /api/v1/country
+
+  - Response:
+```json
+[
+  {
+    "countryId": 1,
+    "countryName": "United States"
+  }
+]
+```
+
+- Get Company Statistics by Country:
+
+  - Endpoint: GET /api/v1/country/getCompanyStatisticsByCountryId?countryId=1
+
+  - Response:
+```json
+{
+  "Apple": 351,
+  "Google": 424
+}
+```
+
+## Additional Features
+- FluentValidation: Ensures all input data is validated before processing.
+
+- MediatR: Implements the Mediator pattern for handling requests.
+
+- Minimal API: Support for minimal API endpoints.
+
+- Logging and Error Handling: Built-in logging and error handling for better debugging.
