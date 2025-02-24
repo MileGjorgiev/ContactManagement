@@ -1,0 +1,39 @@
+class Program
+{
+      static void Main(string[] args)
+      {
+            string directoryPath = @"C:\YourDirectoryPath";
+            List<string> txtFiles = new List<string>();
+            GetTxtFiles(directoryPath,txtFiles);
+            foreach(var file in txtFiles)
+            {
+                  AppendTextToFile(file, "ASPEKT");
+            }
+     }
+     static void GetTxtFiles(string directoryPath, List<string> txtFiles)
+     {
+             string[] files = Directory.GetFiles(directoryPath, "*.txt");
+             txtFiles.AddRange(files);
+             string[] subdirectories = Directory.GetDirectories(directoryPath);
+              foreach(string subdirectory in subdirectories)
+              {
+                      GetTxtFiles(subdirectory, txtFiles); // FIX
+              }
+     }
+     static void AppendTextToFile(string filePath, string textToAppend)
+    {
+      using (StreamWriter writer = File.AppendText(filePath))
+    	{
+       	 	writer.WriteLine(textToAppend);                        // FIX
+    	}
+    }       
+}
+
+    • In the GetTxtFiles method, the recursive call is passing the wrong directory path. It should pass subdirectory instead of directoryPath.
+The current code is recursively calling GetTxtFiles with the same directoryPath, which will cause an infinite loop or at least unnecessary repeated processing of the same directory.
+Fix: Change the recursive call to pass subdirectory instead of directoryPath.
+
+
+    • The StreamWriter object is not being properly disposed of, which could lead to resource leaks.
+The StreamWriter should be disposed of after use to release the file handle and ensure that all data is flushed to the file.
+Fix: Use a using statement to ensure that the StreamWriter is properly disposed of.
