@@ -42,3 +42,17 @@ Advanced Features:
 - Testing: xUnit, Moq
 
 - API Documentation: Swagger
+
+## API Documentation
+Authentication
+- Login:
+
+  - Endpoint: POST /api/v1/auth/login
+
+  - Request Body:
+ 
+```json
+{
+  "username": "login",
+  "password": "login"
+}
